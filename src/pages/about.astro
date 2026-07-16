@@ -22,17 +22,16 @@ import Header from '../components/Header.astro';
 
 <style>
 	.about-page {
-		width: 100%;
-		max-width: none;
-		margin: 0;
-		padding: 0 0 4em;
+		width: min(860px, calc(100% - 2em));
+		margin: auto;
+		padding: 2em 1em 4em;
 	}
 
 	.about-image {
 		display: block;
 		width: 100%;
 		height: auto;
-		border-radius: 0;
-		box-shadow: none;
+		border-radius: 8px;
+		box-shadow: var(--box-shadow);
 	}
 </style>
