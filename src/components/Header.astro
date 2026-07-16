@@ -5,7 +5,7 @@ import HeaderLink from './HeaderLink.astro';
 
 <header>
 	<nav>
-		<h2><a href="/">{SITE_TITLE}</a></h2>
+		<h2 class="site-title"><a href="/">{SITE_TITLE}</a></h2>
 		<div class="internal-links">
 			<HeaderLink href="/">首页</HeaderLink>
 			<HeaderLink href="/blog">文章</HeaderLink>
@@ -16,23 +16,32 @@ import HeaderLink from './HeaderLink.astro';
 <style>
 	header {
 		margin: 0;
-		padding: 0 1em;
+		padding: 1.25em 1em 0;
 		background: white;
 		box-shadow: 0 2px 8px rgba(var(--black), 5%);
 	}
 	h2 {
 		margin: 0;
-		font-size: 1em;
+		font-size: 1.35em;
 	}
 
 	h2 a,
 	h2 a.active {
 		text-decoration: none;
 	}
+	.site-title a,
+	.site-title a.active {
+		color: var(--accent);
+	}
 	nav {
 		display: flex;
+		flex-direction: column;
 		align-items: center;
-		justify-content: space-between;
+		justify-content: center;
+	}
+	.internal-links {
+		display: flex;
+		justify-content: center;
 	}
 	nav a {
 		padding: 1em 0.5em;
