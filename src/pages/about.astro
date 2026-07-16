@@ -1,11 +1,37 @@
 ---
-import AboutHeroImage from '../assets/云南的月.jpg';
-import Layout from '../layouts/BlogPost.astro';
+import { Image } from 'astro:assets';
+import AboutImage from '../assets/云南的月.jpg';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
 ---
 
-<Layout
-	title="关于"
-	description="关于来进"
-	pubDate={new Date('July 16 2026')}
-	heroImage={AboutHeroImage}
-/>
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<BaseHead title="关于" description="关于来进" />
+	</head>
+	<body>
+		<Header />
+		<main class="about-page">
+			<Image src={AboutImage} alt="云南的月" class="about-image" />
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.about-page {
+		width: min(860px, calc(100% - 2em));
+		margin: auto;
+		padding: 2em 1em 4em;
+	}
+
+	.about-image {
+		display: block;
+		width: 100%;
+		height: auto;
+		border-radius: 8px;
+		box-shadow: var(--box-shadow);
+	}
+</style>
