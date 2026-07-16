@@ -18,12 +18,7 @@ const posts = (await getCollection('blog')).sort(
 		<style>
 			main {
 				width: 760px;
-				padding-top: 3.5em;
-			}
-			.page-title {
-				margin-bottom: 1.5em;
-				text-align: center;
-				font-size: 2rem;
+				padding-top: 2.5em;
 			}
 			.post-list {
 				margin: 0;
@@ -40,6 +35,7 @@ const posts = (await getCollection('blog')).sort(
 			.post-link {
 				display: block;
 				color: inherit;
+				text-align: center;
 				text-decoration: none;
 			}
 			.post-title {
@@ -49,8 +45,8 @@ const posts = (await getCollection('blog')).sort(
 			}
 			.description {
 				margin: 0 0 0.35em;
-				color: rgb(var(--gray-dark));
-				font-size: 0.95rem;
+				color: rgb(var(--gray));
+				font-size: 0.9rem;
 				line-height: 1.6;
 			}
 			.date {
@@ -66,7 +62,6 @@ const posts = (await getCollection('blog')).sort(
 	<body>
 		<Header />
 		<main>
-			<h1 class="page-title">文章</h1>
 			<section aria-label="文章列表">
 				<ul class="post-list">
 					{
