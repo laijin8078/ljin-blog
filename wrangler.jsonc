@@ -1,0 +1,8 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ljin-blog",
+  "compatibility_date": "2026-07-16",
+  "assets": {
+    "directory": "./dist"
+  }
+}
