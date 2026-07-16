@@ -1,11 +1,17 @@
 ---
 import { SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
+
+const titleCharacters = Array.from(SITE_TITLE);
 ---
 
 <header>
 	<nav>
-		<h2 class="site-title"><a href="/">{SITE_TITLE}</a></h2>
+		<h2 class="site-title">
+			<a href="/" aria-label={SITE_TITLE}>
+				{titleCharacters.map((character) => <span aria-hidden="true">{character}</span>)}
+			</a>
+		</h2>
 		<div class="internal-links">
 			<HeaderLink href="/">首页</HeaderLink>
 			<HeaderLink href="/blog">文章</HeaderLink>
@@ -24,6 +30,9 @@ import HeaderLink from './HeaderLink.astro';
 		margin: 0;
 		font-size: 1.35em;
 	}
+	.site-title {
+		width: 100%;
+	}
 
 	h2 a,
 	h2 a.active {
@@ -31,6 +40,12 @@ import HeaderLink from './HeaderLink.astro';
 	}
 	.site-title a,
 	.site-title a.active {
+		display: flex;
+		width: 100%;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0;
+		border-bottom: 0;
 		color: var(--accent);
 	}
 	nav {
