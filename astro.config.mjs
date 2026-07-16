@@ -2,11 +2,14 @@
 
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
-import { defineConfig, fontProviders } from 'astro/config';
+import { defineConfig, fontProviders,passthroughImageService } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://ljin.top',
+	image: {
+    service: passthroughImageService(),
+	},
 	integrations: [mdx(), sitemap()],
 	fonts: [
 		{
