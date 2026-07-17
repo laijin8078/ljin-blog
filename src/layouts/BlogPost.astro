@@ -81,7 +81,7 @@ const { title, description, pubDate, updatedDate, heroImage, slug } = Astro.prop
 								)
 							}
 						</div>
-						{slug && <div class="views" data-view-counter data-slug={slug}>浏览 -- 次</div>}
+						{slug && <div class="views" data-view-counter data-slug={slug} hidden></div>}
 						<h1>{title}</h1>
 						<hr />
 					</div>
@@ -99,11 +99,10 @@ const { title, description, pubDate, updatedDate, heroImage, slug } = Astro.prop
 					.then((data) => {
 						if (data && typeof data.views === 'number') {
 							counter.textContent = `浏览 ${data.views} 次`;
+							counter.hidden = false;
 						}
 					})
-					.catch(() => {
-						counter.textContent = '浏览次数暂不可用';
-					});
+					.catch(() => {});
 			}
 		</script>
 	</body>
