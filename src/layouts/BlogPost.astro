@@ -83,6 +83,7 @@ const {
 				</div>
 				<div class="prose">
 					<div class="title">
+						<h1>{title}</h1>
 						<div class="date">
 							<FormattedDate date={pubDate} precision={pubDatePrecision} />
 							{
@@ -94,7 +95,6 @@ const {
 							}
 						</div>
 						{slug && <div class="views" data-view-counter data-slug={slug} hidden></div>}
-						<h1>{title}</h1>
 						<hr />
 					</div>
 					<slot />
