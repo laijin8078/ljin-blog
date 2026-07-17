@@ -5,12 +5,24 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
+import type { DateDisplayPrecision } from '../utils/frontmatterDates';
 
 type Props = CollectionEntry<'blog'>['data'] & {
 	slug?: string;
+	pubDatePrecision?: DateDisplayPrecision;
+	updatedDatePrecision?: DateDisplayPrecision;
 };
 
-const { title, description, pubDate, updatedDate, heroImage, slug } = Astro.props;
+const {
+	title,
+	description,
+	pubDate,
+	updatedDate,
+	heroImage,
+	slug,
+	pubDatePrecision = 'datetime',
+	updatedDatePrecision = 'datetime',
+} = Astro.props;
 ---
 
 <html lang="en">
@@ -72,11 +84,11 @@ const { title, description, pubDate, updatedDate, heroImage, slug } = Astro.prop
 				<div class="prose">
 					<div class="title">
 						<div class="date">
-							<FormattedDate date={pubDate} />
+							<FormattedDate date={pubDate} precision={pubDatePrecision} />
 							{
 								updatedDate && (
 									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
+										Last updated on <FormattedDate date={updatedDate} precision={updatedDatePrecision} />
 									</div>
 								)
 							}

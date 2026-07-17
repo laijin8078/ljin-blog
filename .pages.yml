@@ -49,14 +49,18 @@ content:
         type: date
         required: true
         options:
-          format: yyyy-MM-dd
+          time: true
+          step: 60
+          format: "yyyy-MM-dd'T'HH:mm:ssxxx"
       - name: updatedDate
         label: 更新日期
         type: date
         required: false
         default: ""
         options:
-          format: yyyy-MM-dd
+          time: true
+          step: 60
+          format: "yyyy-MM-dd'T'HH:mm:ssxxx"
       - name: heroImage
         label: 封面图片
         type: image

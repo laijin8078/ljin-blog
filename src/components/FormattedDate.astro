@@ -1,21 +1,33 @@
 ---
+import type { DateDisplayPrecision } from '../utils/frontmatterDates';
+
 interface Props {
 	date: Date;
+	precision?: DateDisplayPrecision;
 }
 
-const { date } = Astro.props;
+const { date, precision = 'datetime' } = Astro.props;
+
+const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
+	year: 'numeric',
+	month: 'long',
+	day: 'numeric',
+	timeZone: 'Asia/Shanghai',
+});
+
+const dateTimeFormatter = new Intl.DateTimeFormat('zh-CN', {
+	year: 'numeric',
+	month: 'long',
+	day: 'numeric',
+	hour: '2-digit',
+	minute: '2-digit',
+	hour12: false,
+	timeZone: 'Asia/Shanghai',
+});
+
+const isDateOnly = precision === 'date';
+const datetime = isDateOnly ? date.toISOString().slice(0, 10) : date.toISOString();
+const formattedDate = isDateOnly ? dateFormatter.format(date) : dateTimeFormatter.format(date);
 ---
 
-<time datetime={date.toISOString()}>
-	{
-		date.toLocaleString('zh-CN', {
-			year: 'numeric',
-			month: 'long',
-			day: 'numeric',
-			hour: '2-digit',
-			minute: '2-digit',
-			hour12: false,
-			timeZone: 'Asia/Shanghai',
-		})
-	}
-</time>
+<time datetime={datetime}>{formattedDate}</time>

@@ -5,6 +5,7 @@ import Footer from '../../components/Footer.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import { getFrontmatterDatePrecision } from '../../utils/frontmatterDates';
 
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
@@ -71,7 +72,10 @@ const posts = (await getCollection('blog')).sort(
 									<h2 class="post-title">{post.data.title}</h2>
 									<p class="description">{post.data.description}</p>
 									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
+										<FormattedDate
+											date={post.data.pubDate}
+											precision={getFrontmatterDatePrecision(post.filePath, 'pubDate')}
+										/>
 									</p>
 								</a>
 							</li>
