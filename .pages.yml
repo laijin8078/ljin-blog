@@ -51,7 +51,7 @@ content:
         options:
           time: true
           step: 60
-          format: "yyyy-MM-dd'T'HH:mm:ssxxx"
+          format: "yyyy-MM-dd'T'HH:mm:ss'+08:00'"
       - name: updatedDate
         label: 更新日期
         type: date
@@ -60,7 +60,7 @@ content:
         options:
           time: true
           step: 60
-          format: "yyyy-MM-dd'T'HH:mm:ssxxx"
+          format: "yyyy-MM-dd'T'HH:mm:ss'+08:00'"
       - name: heroImage
         label: 封面图片
         type: image
