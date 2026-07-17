@@ -1,0 +1,79 @@
+media:
+  - name: cover_images
+    label: Cover images
+    input: src/assets
+    output: ../../assets
+    categories: [image]
+    extensions: [jpg, jpeg, png, webp, gif, avif]
+    rename: safe
+  - name: blog_images
+    label: Blog content images
+    input: public/images/blog
+    output: /images/blog
+    categories: [image]
+    extensions: [jpg, jpeg, png, webp, gif, avif]
+    rename: safe
+
+settings:
+  content:
+    merge: true
+
+content:
+  - name: blog
+    label: 博客文章
+    type: collection
+    path: src/content/blog
+    format: yaml-frontmatter
+    filename:
+      template: "{primary}.md"
+      field: create
+    exclude:
+      - "**/*.mdx"
+    subfolders: false
+    view:
+      primary: title
+      fields: [pubDate, updatedDate, description]
+      sort: pubDate
+      order: desc
+    fields:
+      - name: title
+        label: 文章标题
+        type: string
+        required: true
+      - name: description
+        label: 文章摘要
+        type: text
+        required: true
+      - name: pubDate
+        label: 发布日期
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+      - name: updatedDate
+        label: 更新日期
+        type: date
+        required: false
+        default: ""
+        options:
+          format: yyyy-MM-dd
+      - name: heroImage
+        label: 封面图片
+        type: image
+        required: false
+        options:
+          media: cover_images
+          categories: [image]
+          extensions: [jpg, jpeg, png, webp, gif, avif]
+          rename: safe
+      - name: body
+        label: 正文
+        type: rich-text
+        required: true
+        options:
+          format: markdown
+          media: blog_images
+          categories: [image]
+          extensions: [jpg, jpeg, png, webp, gif, avif]
+          rename: safe
+          switcher: true

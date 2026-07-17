@@ -61,3 +61,11 @@ Check out [our documentation](https://docs.astro.build) or jump into our [Discor
 ## Credit
 
 This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+
+## Pages CMS 写作后台
+
+访问 [Pages CMS](https://app.pagescms.org/) 并使用 GitHub 登录，选择 `ljin-blog` 仓库和 `main` 分支，然后进入“博客文章”集合。
+
+新建文章时，将创建时显示的文件名填写为英文小写 slug，例如 `my-first-post`，Pages CMS 会生成 `src/content/blog/my-first-post.md`。填写标题、摘要、发布日期、可选更新日期和正文后保存；保存会提交到 GitHub，`main` 分支更新后由 Cloudflare 自动构建并部署到 `https://ljin.top`。
+
+封面图片通过“封面图片”字段上传，会保存到 `src/assets`，文章 frontmatter 中写入类似 `../../assets/cover.jpg` 的路径。正文编辑器中插入的图片会保存到 `public/images/blog`，Markdown 中写入类似 `/images/blog/example.jpg` 的路径。
