@@ -16,6 +16,11 @@
 		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
 		0 16px 32px rgba(var(--gray), 33%);
 }
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
 body {
 	font-family: var(--font-atkinson);
 	margin: 0;
@@ -26,7 +31,7 @@ body {
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 	color: rgb(var(--gray-dark));
-	font-size: 20px;
+	font-size: clamp(16px, calc(15px + 0.42vw), 20px);
 	line-height: 1.7;
 }
 main {
@@ -46,16 +51,16 @@ h6 {
 	line-height: 1.2;
 }
 h1 {
-	font-size: 3.052em;
+	font-size: clamp(2rem, calc(1.25rem + 3.2vw), 3.052rem);
 }
 h2 {
-	font-size: 2.441em;
+	font-size: clamp(1.6rem, calc(1.25rem + 1.6vw), 2.441rem);
 }
 h3 {
-	font-size: 1.953em;
+	font-size: clamp(1.35rem, calc(1.15rem + 1vw), 1.953rem);
 }
 h4 {
-	font-size: 1.563em;
+	font-size: clamp(1.2rem, calc(1.05rem + 0.65vw), 1.563rem);
 }
 h5 {
 	font-size: 1.25em;
@@ -114,11 +119,8 @@ hr {
 	border-top: 1px solid rgb(var(--gray-light));
 }
 @media (max-width: 720px) {
-	body {
-		font-size: 18px;
-	}
 	main {
-		padding: 1em;
+		padding: 1.5rem 1rem;
 	}
 }
 
