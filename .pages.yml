@@ -72,9 +72,15 @@ content:
           rename: safe
       - name: tags
         label: 文章标签
-        type: string
-        list: true
+        type: select
         required: false
+        options:
+          values:
+            - name: 股市
+              label: 股市
+            - name: 随想
+              label: 随想
+          multiple: true
       - name: body
         label: 正文
         type: rich-text
