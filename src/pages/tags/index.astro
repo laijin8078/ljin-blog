@@ -1,0 +1,77 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import { SITE_TITLE } from '../../consts';
+import { collectTags, getTagHref } from '../../utils/tags';
+
+const tags = collectTags(await getCollection('blog'));
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={`标签 | ${SITE_TITLE}`} description="按标签浏览文章" />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>标签</h1>
+			<p class="intro">按主题浏览全部文章。</p>
+			<ul class="tag-cloud" aria-label="全部文章标签">
+				{
+					tags.map((tag) => (
+						<li>
+							<a href={getTagHref(tag.name)}>
+								<span>{tag.name}</span>
+								<small>{tag.count} 篇</small>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	main {
+		width: 760px;
+	}
+	h1,
+	.intro {
+		text-align: center;
+	}
+	.intro {
+		color: rgb(var(--gray));
+	}
+	.tag-cloud {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+		gap: 1rem;
+		margin: 2rem 0 0;
+		padding: 0;
+		list-style: none;
+	}
+	.tag-cloud a {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.8rem 1rem;
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 10px;
+		background: white;
+		color: rgb(var(--gray-dark));
+		text-decoration: none;
+	}
+	.tag-cloud a:hover,
+	.tag-cloud a:focus-visible {
+		border-color: var(--accent);
+		color: var(--accent);
+	}
+	small {
+		color: rgb(var(--gray));
+	}
+</style>

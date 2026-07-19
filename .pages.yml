@@ -32,7 +32,7 @@ content:
     subfolders: false
     view:
       primary: title
-      fields: [pubDate, updatedDate, description]
+      fields: [pubDate, updatedDate, tags, description]
       sort: pubDate
       order: desc
     fields:
@@ -70,6 +70,11 @@ content:
           categories: [image]
           extensions: [jpg, jpeg, png, webp, gif, avif]
           rename: safe
+      - name: tags
+        label: 文章标签
+        type: string
+        list: true
+        required: false
       - name: body
         label: 正文
         type: rich-text

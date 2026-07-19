@@ -1,0 +1,51 @@
+---
+import { getTagHref, getUniqueTags } from '../utils/tags';
+
+interface Props {
+	tags: string[];
+	label?: string;
+}
+
+const { tags, label = '文章标签' } = Astro.props;
+const uniqueTags = getUniqueTags(tags);
+---
+
+{
+	uniqueTags.length > 0 && (
+		<ul class="tag-list" aria-label={label}>
+			{uniqueTags.map((tag) => (
+				<li>
+					<a href={getTagHref(tag)}>{tag}</a>
+				</li>
+			))}
+		</ul>
+	)
+}
+
+<style>
+	.tag-list {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.45rem;
+		margin: 0.65rem 0 0;
+		padding: 0;
+		list-style: none;
+	}
+	a {
+		display: inline-block;
+		padding: 0.12rem 0.65rem;
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 999px;
+		background: white;
+		color: rgb(var(--gray-dark));
+		font-size: 0.78rem;
+		line-height: 1.6;
+		text-decoration: none;
+	}
+	a:hover,
+	a:focus-visible {
+		border-color: var(--accent);
+		color: var(--accent);
+	}
+</style>

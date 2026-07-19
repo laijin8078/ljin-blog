@@ -5,6 +5,7 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
+import TagList from '../components/TagList.astro';
 import type { DateDisplayPrecision } from '../utils/frontmatterDates';
 
 type Props = CollectionEntry<'blog'>['data'] & {
@@ -19,6 +20,7 @@ const {
 	pubDate,
 	updatedDate,
 	heroImage,
+	tags,
 	slug,
 	pubDatePrecision = 'datetime',
 	updatedDatePrecision = 'datetime',
@@ -94,6 +96,7 @@ const {
 								)
 							}
 						</div>
+						<TagList {tags} />
 						{slug && <div class="views" data-view-counter data-slug={slug} hidden></div>}
 						<hr />
 					</div>
