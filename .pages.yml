@@ -80,6 +80,8 @@ content:
               label: 股市
             - name: 随想
               label: 随想
+            - name: 毛选阅读
+              label: 毛选阅读
           multiple: true
       - name: body
         label: 正文
