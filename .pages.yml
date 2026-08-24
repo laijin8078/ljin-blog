@@ -82,6 +82,8 @@ content:
               label: 随想
             - name: 毛选阅读
               label: 毛选阅读
+            - name: 病隙碎笔
+              label: 病隙碎笔
           multiple: true
       - name: body
         label: 正文
