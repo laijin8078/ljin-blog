@@ -33,8 +33,10 @@ content:
     view:
       primary: title
       fields: [pubDate, updatedDate, tags, description]
-      sort: pubDate
-      order: desc
+      sort: [pubDate, updatedDate]
+      default:
+        sort: pubDate
+        order: desc
     fields:
       - name: title
         label: 文章标题
