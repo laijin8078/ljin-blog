@@ -78,7 +78,7 @@ This theme is based off of the lovely [Bear Blog](https://github.com/HermanMarti
 
 ### Cloudflare 部署
 
-1. 创建 D1 数据库，例如 `npx wrangler d1 create ljin-blog-content`。在 `wrangler.jsonc` 的 `BLOG_DB` 绑定中填入该数据库的 `database_name` 和 `database_id`。首次部署前执行 `npx wrangler d1 migrations apply BLOG_DB --remote`。
+1. `wrangler.jsonc` 的 `BLOG_DB` 已绑定生产数据库 `ljin-blog-content`。有新迁移时，在部署前执行 `npx wrangler d1 migrations apply BLOG_DB --remote`。
 2. 在 `ljin-blog` Worker 的「Settings → Variables and Secrets」中添加 Secret `BLOG_OWNER_PASSWORD`。用密码管理器生成至少 32 字符的随机密码。这个密码用于站主登录，修改后已有会话会失效。
 3. 按现有 Cloudflare Workers 部署流程发布。部署后打开站点页脚的「私密文章」以及任意公开文章的评论区。
 

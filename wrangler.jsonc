@@ -14,7 +14,9 @@
   ],
   "d1_databases": [
     {
-      "binding": "BLOG_DB"
+      "binding": "BLOG_DB",
+      "database_name": "ljin-blog-content",
+      "database_id": "79b19cf0-618e-4b59-868b-074e33f8d05b"
     }
   ],
   "ratelimits": [
