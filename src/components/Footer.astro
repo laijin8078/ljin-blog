@@ -4,6 +4,7 @@ const today = new Date();
 
 <footer>
 	&copy; {today.getFullYear()} 来进札记
+	<a class="private-link" href="/private/">私密文章</a>
 	<div class="social-links">
 		<a class="xiaohongshu-link" href="https://xhslink.com/m/94o9qjPBMNn" target="_blank">
 			<span class="sr-only">访问来进的小红书主页</span>
@@ -55,6 +56,11 @@ const today = new Date();
 		justify-content: center;
 		gap: 1em;
 		margin-top: 1em;
+	}
+	.private-link {
+		margin-left: 0.6rem;
+		color: inherit;
+		font-size: 0.9em;
 	}
 	.social-links a {
 		text-decoration: none;

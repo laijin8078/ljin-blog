@@ -1,13 +1,6 @@
-function json(data, init = {}) {
-	return new Response(JSON.stringify(data), {
-		...init,
-		headers: {
-			'content-type': 'application/json; charset=utf-8',
-			'cache-control': 'no-store',
-			...(init.headers || {}),
-		},
-	});
-}
+import { handleComments } from './server/comments.js';
+import { handlePrivate } from './server/private.js';
+import { json } from './server/responses.js';
 
 function getSlug(request) {
 	const url = new URL(request.url);
@@ -44,6 +37,16 @@ export default {
 
 		if (url.pathname === '/api/views') {
 			return handleViews(request, env);
+		}
+		if (url.pathname === '/api/comments') {
+			try {
+				return await handleComments(request, env, url);
+			} catch {
+				return json({ error: '评论暂时不可用，请稍后再试。' }, { status: 503 });
+			}
+		}
+		if (url.pathname === '/private' || url.pathname.startsWith('/private/')) {
+			return handlePrivate(request, env, url);
 		}
 
 		return env.ASSETS.fetch(request);

@@ -11,5 +11,17 @@
     {
       "binding": "BLOG_VIEWS"
     }
+  ],
+  "d1_databases": [
+    {
+      "binding": "BLOG_DB"
+    }
+  ],
+  "ratelimits": [
+    {
+      "name": "BLOG_RATE_LIMIT",
+      "namespace_id": "4018078",
+      "simple": { "limit": 6, "period": 60 }
+    }
   ]
 }

@@ -1,0 +1,138 @@
+---
+const { slug } = Astro.props;
+---
+
+<section class="comments" aria-labelledby="comments-title" data-comments={slug}>
+	<h2 id="comments-title">评论</h2>
+	<form hidden>
+		<label for="comment-name">昵称（选填）</label>
+		<input id="comment-name" name="nickname" placeholder="匿名访客" maxlength="30" />
+		<label for="comment-body">留言</label>
+		<textarea id="comment-body" name="body" rows="4" maxlength="1000" required></textarea>
+		<button class="publish" type="submit">发表评论</button>
+	</form>
+	<div class="comment-status" role="status" aria-live="polite"></div>
+	<ol class="comment-list" aria-label="已有评论"></ol>
+	<button class="more" type="button" hidden>查看更多评论</button>
+	<noscript>请启用 JavaScript 后查看和发表评论。</noscript>
+	<template>
+		<li class="comment">
+			<div class="comment-meta"><strong></strong><time></time></div>
+			<div class="comment-body"></div>
+		</li>
+	</template>
+</section>
+
+<script>
+	const section = document.querySelector<HTMLElement>('[data-comments]');
+	const form = section?.querySelector<HTMLFormElement>('form');
+	const submit = form?.querySelector<HTMLButtonElement>('button');
+	const status = section?.querySelector<HTMLElement>('[role="status"]');
+	const list = section?.querySelector<HTMLOListElement>('ol');
+	const more = section?.querySelector<HTMLButtonElement>('.more');
+	const template = section?.querySelector<HTMLTemplateElement>('template');
+
+	if (section?.dataset.comments && form && submit && status && list && more && template) {
+		type Comment = { id: number; nickname: string; body: string; created_at: string };
+		const endpoint = `/api/comments?slug=${encodeURIComponent(section.dataset.comments)}`;
+		const dateFormat = new Intl.DateTimeFormat('zh-CN', { dateStyle: 'medium', timeStyle: 'short' });
+		const displayed = new Set<number>();
+		let before: number | null = null;
+
+		function renderComment(comment: Comment) {
+			const item = template!.content.firstElementChild!.cloneNode(true) as HTMLElement;
+			item.querySelector('strong')!.textContent = comment.nickname;
+			item.querySelector('.comment-body')!.textContent = comment.body;
+			const time = item.querySelector('time')!;
+			time.dateTime = comment.created_at;
+			time.textContent = dateFormat.format(new Date(comment.created_at));
+			displayed.add(comment.id);
+			return item;
+		}
+
+		const loadComments = async () => {
+			more.disabled = true;
+			status.textContent = '正在加载评论…';
+			try {
+				const response = await fetch(before ? `${endpoint}&before=${before}` : endpoint);
+				if (!response.ok) throw new Error();
+				const { comments, next } = (await response.json()) as { comments: Comment[]; next: number | null };
+				for (const comment of comments) {
+					if (!displayed.has(comment.id)) list.append(renderComment(comment));
+				}
+				before = next;
+				more.hidden = next === null;
+				more.textContent = '查看更多评论';
+				status.textContent = displayed.size ? '' : '暂时还没有评论。';
+				form.hidden = false;
+			} catch {
+				status.textContent = '评论加载失败，请重试。';
+				more.hidden = false;
+				more.textContent = '重新加载评论';
+			} finally {
+				more.disabled = false;
+			}
+		};
+
+		more.addEventListener('click', loadComments);
+		form.addEventListener('submit', async (event) => {
+			event.preventDefault();
+			if (submit.disabled) return;
+			submit.disabled = true;
+			status.textContent = '正在发表评论…';
+			try {
+				const fields = new URLSearchParams();
+				new FormData(form).forEach((value, name) => fields.set(name, String(value)));
+				const response = await fetch(endpoint, { method: 'POST', body: fields });
+				const data = await response.json();
+				if (!response.ok) {
+					status.textContent = data.error || '评论发送失败，请重试。';
+					return;
+				}
+				if (!displayed.has(data.id)) list.prepend(renderComment(data));
+				form.reset();
+				status.textContent = '评论已发表。';
+			} catch {
+				status.textContent = '暂时无法确认评论是否已发送，请刷新查看。';
+			} finally {
+				submit.disabled = false;
+			}
+		});
+
+		void loadComments();
+	}
+</script>
+
+<style>
+	.comments { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid rgb(var(--gray-light)); }
+	.comments h2 { font-size: 1.5rem; }
+	.comments form { margin: 1rem 0; }
+	.comments label { display: block; margin-top: 0.75rem; font-size: 0.95rem; }
+	.comments input, .comments textarea {
+		display: block;
+		max-width: 100%;
+		margin: 0.35rem 0 0.75rem;
+		padding: 0.5rem 0.7rem;
+		border: 1px solid rgb(var(--gray));
+		border-radius: 6px;
+		font: inherit;
+	}
+	.comments textarea { resize: vertical; }
+	.comments button {
+		padding: 0.45rem 0.8rem;
+		border: 1px solid var(--accent);
+		border-radius: 6px;
+		background: white;
+		color: var(--accent-dark);
+		font: inherit;
+		cursor: pointer;
+	}
+	.comments .publish { background: var(--accent); color: white; }
+	.comments button:disabled { opacity: 0.6; cursor: wait; }
+	.comment-status { color: rgb(var(--gray)); font-size: 0.95rem; }
+	.comment-list { list-style: none; margin: 0; padding: 0; }
+	.comment { padding: 0.9rem 0; border-top: 1px solid rgb(var(--gray-light)); }
+	.comment-meta { display: flex; align-items: baseline; flex-wrap: wrap; column-gap: 0.8rem; }
+	.comment-meta time { color: rgb(var(--gray)); font-size: 0.8em; }
+	.comment-body { white-space: pre-wrap; overflow-wrap: anywhere; }
+</style>

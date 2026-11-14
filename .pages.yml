@@ -89,6 +89,7 @@ content:
           multiple: true
       - name: body
         label: 正文
+        description: 保存后正文会发布到公开网站。仅自己可见的文章请在网站页脚的「私密文章」中撰写。
         type: rich-text
         required: true
         options:
