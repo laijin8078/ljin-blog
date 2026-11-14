@@ -9,7 +9,8 @@ const uuidPattern = /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/;
 const privateHeaders = {
 	'Cache-Control': 'private, no-store',
 	'X-Robots-Tag': 'noindex, nofollow',
-	'Referrer-Policy': 'no-referrer',
+	// Native forms need Origin for the POST check. Keep private URLs out of off-site referrers.
+	'Referrer-Policy': 'same-origin',
 	'X-Content-Type-Options': 'nosniff',
 	'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
 };
