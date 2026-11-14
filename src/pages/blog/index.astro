@@ -68,7 +68,7 @@ const posts = (await getCollection('blog')).sort(
 				<ul class="post-list">
 					{
 						posts.map((post) => (
-							<li class="post-item">
+							<li class="post-item" data-post-slug={encodeURIComponent(post.id)}>
 								<a class="post-link" href={`/blog/${post.id}/`}>
 									<h2 class="post-title">{post.data.title}</h2>
 									<p class="description">{post.data.description}</p>

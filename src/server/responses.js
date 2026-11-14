@@ -13,6 +13,12 @@ export function isSameOrigin(request) {
 	return request.headers.get('Origin') === new URL(request.url).origin;
 }
 
+export function escapeHtml(value = '') {
+	return value.replace(/[&<>"']/g, (character) => ({
+		'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+	})[character]);
+}
+
 export async function readFields(request, maxBytes) {
 	if (request.headers.get('Content-Type')?.split(';')[0] !== 'application/x-www-form-urlencoded') {
 		return null;

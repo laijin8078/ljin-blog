@@ -3,12 +3,14 @@
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig, fontProviders } from 'astro/config';
+import articleImports from './src/integrations/articleImports.mjs';
 
 // https://astro.build/config
+const site = 'https://ljin.top';
 export default defineConfig({
-	site: 'https://ljin.top',
+	site,
 	output: 'static',
-	integrations: [mdx(), sitemap()],
+	integrations: [mdx(), sitemap(), articleImports(site)],
 	fonts: [
 		{
 			provider: fontProviders.local(),

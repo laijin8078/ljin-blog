@@ -1,4 +1,5 @@
 import { handleComments } from './server/comments.js';
+import { archivedResponse, isArchivedPost, servePublic } from './server/articleArchive.js';
 import { handlePrivate } from './server/private.js';
 import { json } from './server/responses.js';
 
@@ -36,10 +37,14 @@ export default {
 		const url = new URL(request.url);
 
 		if (url.pathname === '/api/views') {
+			const slug = getSlug(request);
+			if (slug && await isArchivedPost(env.BLOG_DB, slug)) return archivedResponse();
 			return handleViews(request, env);
 		}
 		if (url.pathname === '/api/comments') {
 			try {
+				const slug = url.searchParams.get('slug');
+				if (slug && await isArchivedPost(env.BLOG_DB, slug)) return archivedResponse();
 				return await handleComments(request, env, url);
 			} catch {
 				return json({ error: '评论暂时不可用，请稍后再试。' }, { status: 503 });
@@ -49,6 +54,10 @@ export default {
 			return handlePrivate(request, env, url);
 		}
 
-		return env.ASSETS.fetch(request);
+		try {
+			return await servePublic(request, env, url);
+		} catch (error) {
+			return new Response(null, { status: error instanceof URIError ? 400 : 503, headers: { 'Cache-Control': 'no-store' } });
+		}
 	},
 };

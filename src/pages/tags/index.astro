@@ -4,9 +4,10 @@ import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
 import { SITE_TITLE } from '../../consts';
-import { collectTags, getTagHref } from '../../utils/tags';
+import { collectTags, getTagHref, getTagKey } from '../../utils/tags';
 
-const tags = collectTags(await getCollection('blog'));
+const posts = await getCollection('blog');
+const tags = collectTags(posts);
 ---
 
 <!doctype html>
@@ -22,10 +23,10 @@ const tags = collectTags(await getCollection('blog'));
 			<ul class="tag-cloud" aria-label="全部文章标签">
 				{
 					tags.map((tag) => (
-						<li>
+						<li data-tag-posts={posts.filter((post) => post.data.tags.some((name) => getTagKey(name) === tag.key)).map((post) => encodeURIComponent(post.id)).join(',')}>
 							<a href={getTagHref(tag.name)}>
 								<span>{tag.name}</span>
-								<small>{tag.count} 篇</small>
+								<small data-tag-total>{tag.count} 篇</small>
 							</a>
 						</li>
 					))

@@ -41,11 +41,11 @@ const { tagName, posts } = Astro.props;
 		<Header />
 		<main>
 			<h1>标签：{tagName}</h1>
-			<p class="count">共 {posts.length} 篇文章</p>
+			<p class="count" data-tag-count={posts.map((post) => encodeURIComponent(post.id)).join(',')}>共 {posts.length} 篇文章</p>
 			<ul class="post-list">
 				{
 					posts.map((post) => (
-						<li class="post-item">
+							<li class="post-item" data-post-slug={encodeURIComponent(post.id)}>
 							<a class="post-link" href={`/blog/${post.id}/`}>
 								<h2>{post.data.title}</h2>
 								<p class="description">{post.data.description}</p>

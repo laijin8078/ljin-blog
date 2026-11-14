@@ -1,5 +1,6 @@
 import MarkdownIt from 'markdown-it';
-import { checkRateLimit, isSameOrigin, readFields } from './responses.js';
+import { importPage } from './articleArchive.js';
+import { checkRateLimit, escapeHtml, isSameOrigin, readFields } from './responses.js';
 
 const markdown = new MarkdownIt({ html: false }).disable('image');
 const cookieName = '__Host-ljin-owner';
@@ -12,14 +13,8 @@ const privateHeaders = {
 	// Native forms need Origin for the POST check. Keep private URLs out of off-site referrers.
 	'Referrer-Policy': 'same-origin',
 	'X-Content-Type-Options': 'nosniff',
-	'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
+	'Content-Security-Policy': "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
 };
-
-function escapeHtml(value = '') {
-	return value.replace(/[&<>"']/g, (character) => ({
-		'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-	})[character]);
-}
 
 function page(title, content, status = 200) {
 	return new Response(`<!doctype html>
@@ -41,6 +36,12 @@ function page(title, content, status = 200) {
 		button { padding: .45rem .85rem; border: 1px solid #98a3ba; border-radius: 6px; background: white; color: inherit; font: inherit; cursor: pointer; }
 		button[type=submit].primary { background: #2337cc; color: white; border-color: #2337cc; }
 		article { border-top: 1px solid #e5e9f0; }
+		article img { display: block; max-width: 100%; height: auto; border-radius: 8px; }
+		article blockquote { margin-left: 0; padding-left: 1rem; border-left: 3px solid #98a3ba; }
+		article .title h1 { display: none; }
+		article .date { margin: 1rem 0; color: #53617c; }
+		article .tag-list { display: flex; flex-wrap: wrap; gap: 1.25rem; padding-left: 1.2rem; }
+		article [hidden] { display: none; }
 		pre { overflow: auto; }
 		li { margin-bottom: .5rem; }
 		[role=alert] { color: #a12a22; }
@@ -114,6 +115,17 @@ function editor(post, message = '', status = 200) {
 }
 
 async function privatePosts(request, db, pathname) {
+	const imagePath = /^\/private\/([^/]+)\/images\/([^/]+)$/.exec(pathname);
+	if (imagePath && request.method === 'GET' && imagePath.slice(1).every((id) => uuidPattern.test(id))) {
+		const image = await db.prepare('SELECT content_type, data FROM private_post_images WHERE post_id = ? AND id = ?')
+			.bind(imagePath[1], imagePath[2]).first();
+		if (image) {
+			return new Response(new Uint8Array(image.data), {
+				headers: { ...privateHeaders, 'Content-Type': image.content_type },
+			});
+		}
+		return new Response(null, { status: 404, headers: privateHeaders });
+	}
 	const match = /^\/private\/([0-9a-f-]+)(?:\/(edit|delete))?\/?$/.exec(pathname);
 	const id = match?.[1];
 	const action = match?.[2];
@@ -124,14 +136,15 @@ async function privatePosts(request, db, pathname) {
 		const { results } = await db.prepare('SELECT id, title FROM private_posts ORDER BY updated_at DESC, id').all();
 		const items = results.map((post) => `<li><a href="/private/${post.id}/">${escapeHtml(post.title)}</a></li>`).join('');
 		return page('私密文章', `
-			<nav><a href="/private/new">写私密文章</a><form method="post" action="/private/logout"><button type="submit">退出登录</button></form></nav>
+			<nav><a href="/private/new">写私密文章</a><a href="/private/import">转入公开文章</a><form method="post" action="/private/logout"><button type="submit">退出登录</button></form></nav>
 			${items ? `<ul>${items}</ul>` : '<p>还没有私密文章。</p>'}`);
 	}
 
 	if (creating || (id && uuidPattern.test(id))) {
-		const post = creating ? {} : await db.prepare('SELECT id, title, body FROM private_posts WHERE id = ?').bind(id).first();
+		const post = creating ? {} : await db.prepare('SELECT id, title, body, archive_html FROM private_posts WHERE id = ?').bind(id).first();
 		if (!post) return page('文章不存在', '', 404);
 		if (creating || action === 'edit') {
+			if (post.archive_html) return page('文章已保存原版', `<p><a href="/private/${id}/">返回私密文章</a></p>`, 409);
 			if (reading) return editor(post);
 			const fields = await readFields(request, 185_000);
 			const title = fields?.get('title')?.trim() || '';
@@ -158,8 +171,8 @@ async function privatePosts(request, db, pathname) {
 		}
 		if (reading) {
 			return page(post.title, `
-				<nav><a href="/private/${id}/edit">编辑</a><a href="/private/${id}/delete">删除</a></nav>
-				<article>${markdown.render(post.body)}</article>`);
+				<nav>${post.archive_html ? '' : `<a href="/private/${id}/edit">编辑</a>`}<a href="/private/${id}/delete">删除</a></nav>
+				${post.archive_html ?? `<article>${markdown.render(post.body)}</article>`}`);
 		}
 	}
 	return page('页面不存在', '', 404);
@@ -187,10 +200,14 @@ export async function handlePrivate(request, env, { pathname }) {
 			}
 			return redirect('/private/', sessionCookie(await createSession(key), sessionSeconds));
 		}
-		if (!(await hasSession(request, key))) return signIn('', request.method === 'GET' ? 200 : 401);
+		if (!(await hasSession(request, key))) {
+			if (pathname.includes('/images/')) return new Response(null, { status: 404, headers: privateHeaders });
+			return signIn('', request.method === 'GET' ? 200 : 401);
+		}
 		if (pathname === '/private/logout' && request.method === 'POST') {
 			return redirect('/private/', sessionCookie('', 0));
 		}
+		if (pathname === '/private/import') return await importPage(request, env, page, redirect);
 		return await privatePosts(request, env.BLOG_DB, pathname);
 	} catch {
 		return page('私密文章暂时不可用', '<p>请稍后再试。</p>', 503);
